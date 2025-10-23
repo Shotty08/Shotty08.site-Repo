@@ -16,13 +16,13 @@ body {
   grid-gap: 30px;
 }
 
-.img-gallery img {
+.img-gallery PNG {
   width: 100%;
   cursor: pointer;
   transition: 1s ease;
 }
 
-.img-gallery img:hover {
+.img-gallery PNG:hover {
   transform: scale(0.8);
   box-shadow: 0 32px 75px rgba(68, 77, 136, 0.2);
 }
