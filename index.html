@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jakhe's Website</title>
+    <!-- Favicon: Using the same GIF for consistency in the browser tab -->
+    <link rel="icon" type="image/gif" href="https://cdn.shopify.com/s/files/1/0559/4788/6783/files/Noir_Boy.gif?v=1679069334">
     <!-- Load Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -179,6 +181,7 @@
                 { 
                     title: "Girls Want Girls", 
                     artist: "Drake x Lil Baby", 
+                    // Note: This link is provided by the user and is assumed to be working
                     audioUrl: "https://dl.dropboxusercontent.com/scl/fi/60ie59qqggj10hfn9bps7/Drake-Girls-Want-Girls-Audio-ft.-Lil-Baby.mp3?rlkey=lufwfbw3wgh7qs60y096mkuzw&st=2wvt3x7r&dl=0",
                     coverUrl: "https://dl.dropboxusercontent.com/scl/fi/8j4f0c1yuyidh29y5wsac/maxresdefault.jpg?rlkey=86evp0amuw5d687aydxocrf0a&st=50ib6n2t&dl=0" 
                 },
@@ -311,22 +314,22 @@
     <!-- Profile Container (Simulating the modal/pop-up) --><div class="profile-container transparent-card w-full max-w-xl rounded-2xl overflow-hidden my-4 shadow-2xl relative"
         style="box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);">
 
-        <!-- Banner Section REMOVED -->
-
         <!-- Avatar and Main Content (Top Half) -->
         <!-- Adjusted padding (pt-6/pt-8) since the banner is removed -->
         <div class="p-4 pt-6 sm:p-6 sm:pt-8 pb-6 relative"> 
 
             <!-- Avatar/Profile Picture -->
-            <!-- Removed negative margin (-mt-12 sm:-16) since the banner is removed -->
             <div class="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full avatar-shadow" 
                 style="border: 6px solid rgba(47, 49, 54, 0.3);">
-              <!-- Profile Picture -->  <img src="https://cdn.shopify.com/s/files/1/0559/4788/6783/files/Noir_Boy.gif?v=1679069334" alt="User Avatar"
+                <!-- Profile Picture --> 
+                <img src="https://cdn.shopify.com/s/files/1/0559/4788/6783/files/Noir_Boy.gif?v=1679069334" alt="User Avatar"
                     class="w-full h-full rounded-full object-cover">
-                <!-- Status Dot (Online) --><div class="status-dot bg-discord-green"></div>
+                <!-- Status Dot (Online) -->
+                <div class="status-dot bg-discord-green"></div>
             </div>
 
-            <!-- User Info Section --><div class="mt-4">
+            <!-- User Info Section -->
+            <div class="mt-4">
                 <div class="text-white text-3xl font-extrabold tracking-wide">
                     Shotty08
                     <span class="text-gray-400 font-normal text-xl">#TheGoat</span>
@@ -337,46 +340,60 @@
             </div>
         </div>
 
-        <!-- --- PLAYLIST MUSIC PLAYER SECTION --- --><div class="px-6 pb-6 pt-4 border-t border-gray-600/30">
+        <!-- --- PLAYLIST MUSIC PLAYER SECTION --- -->
+        <div class="px-6 pb-6 pt-4 border-t border-gray-600/30">
             <h3 class="text-gray-300 font-semibold mb-3 text-sm uppercase tracking-wider">Now Playing (Playlist Mode)</h3>
 
-            <!-- Music Display & Controls --><div id="music-player" class="bg-gray-700/50 p-4 rounded-xl">
+            <!-- Music Display & Controls -->
+            <div id="music-player" class="bg-gray-700/50 p-4 rounded-xl">
                 <div class="flex items-center space-x-4 mb-3">
-                    <!-- Cover Image --><img id="coverImage" src="https://placehold.co/48x48/5865f2/FFFFFF?text=SONG" alt="Cover"
+                    <!-- Cover Image -->
+                    <img id="coverImage" src="https://placehold.co/48x48/5865f2/FFFFFF?text=SONG" alt="Cover"
                         class="w-12 h-12 rounded-lg flex-shrink-0 object-cover border border-gray-500/50">
                     
-                    <!-- Song Info --><div class="flex-grow min-w-0">
+                    <!-- Song Info -->
+                    <div class="flex-grow min-w-0">
                         <div id="songTitleDisplay" class="text-white text-sm font-semibold truncate">Kalimba (Royalty Free Track)</div>
                         <div id="artistDisplay" class="text-gray-400 text-xs truncate">Bensound</div>
                     </div>
                 </div>
 
-                <!-- Controls Bar --><div class="flex items-center space-x-3">
-                    <!-- Previous Button --><button id="prevBtn" title="Previous" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
+                <!-- Controls Bar -->
+                <div class="flex items-center space-x-3">
+                    <!-- Previous Button -->
+                    <button id="prevBtn" title="Previous" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
                     </button>
                     
-                    <!-- Play/Pause Button --><button id="playPauseBtn" title="Play/Pause" class="p-2 bg-discord-blurple hover:bg-discord-blurple/80 transition rounded-full shadow-lg flex-shrink-0">
-                        <!-- SVG Icon for Play --><svg id="playIcon" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 6v12l10-6z"/></svg>
-                        <!-- SVG Icon for Pause (hidden initially) --><svg id="pauseIcon" class="w-6 h-6 text-white hidden" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h4v12H6zm8 0h4v12h-4z"/></svg>
+                    <!-- Play/Pause Button -->
+                    <button id="playPauseBtn" title="Play/Pause" class="p-2 bg-discord-blurple hover:bg-discord-blurple/80 transition rounded-full shadow-lg flex-shrink-0">
+                        <!-- SVG Icon for Play -->
+                        <svg id="playIcon" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 6v12l10-6z"/></svg>
+                        <!-- SVG Icon for Pause (hidden initially) -->
+                        <svg id="pauseIcon" class="w-6 h-6 text-white hidden" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h4v12H6zm8 0h4v12h-4z"/></svg>
                     </button>
                     
-                    <!-- Next Button --><button id="nextBtn" title="Next" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
+                    <!-- Next Button -->
+                    <button id="nextBtn" title="Next" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
                     </button>
 
-                    <!-- Progress Bar --><div class="flex-grow">
+                    <!-- Progress Bar -->
+                    <div class="flex-grow">
                         <input type="range" id="progressBar" value="0" min="0" max="100" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" style="accent-color: #5865f2;">
                     </div>
 
-                    <!-- Volume Control --><div class="flex items-center space-x-1 w-28 flex-shrink-0 ml-3">
-                        <!-- Volume Icon --><svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.74 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                    <!-- Volume Control -->
+                    <div class="flex items-center space-x-1 w-28 flex-shrink-0 ml-3">
+                        <!-- Volume Icon -->
+                        <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.74 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                         <input type="range" id="volumeControl" value="50" min="0" max="100" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" style="accent-color: #5865f2;">
                     </div>
                 </div>
             </div>
         </div>
-        <!-- --- END PLAYLIST MUSIC PLAYER SECTION --- --></div>
+        <!-- --- END PLAYLIST MUSIC PLAYER SECTION --- -->
+    </div>
 
 </body>
 </html>
