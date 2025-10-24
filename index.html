@@ -169,8 +169,8 @@
             const nextBtn = document.getElementById('nextBtn');
 
             if (!audioPlayer || !playPauseBtn || !volumeControl || !progressBar || !prevBtn || !nextBtn) {
-                 console.error("One or more music player elements are missing.");
-                 return;
+                console.error("One or more music player elements are missing.");
+                return;
             }
             
             // --- PLAYLIST DATA (Your "File" or Server Data) ---
@@ -198,8 +198,12 @@
 
             let currentSongIndex = 0;
 
-            // Function to update all player elements for the current song
-            function loadSong(index) {
+            /**
+             * Function to load a song and optionally attempt to start playback immediately.
+             * @param {number} index - The index of the song in the playlist.
+             * @param {boolean} shouldAttemptPlay - Whether to try starting playback immediately.
+             */
+            function loadSong(index, shouldAttemptPlay = false) {
                 const song = playlist[index];
                 
                 // Update player sources
@@ -211,20 +215,35 @@
                 document.getElementById('artistDisplay').textContent = song.artist;
                 document.getElementById('coverImage').src = song.coverUrl;
                 
-                // Reset buttons and state
+                // Reset buttons to Paused state by default
                 playIcon.classList.remove('hidden');
                 pauseIcon.classList.add('hidden');
                 audioPlayer.pause(); 
+
+                if (shouldAttemptPlay) {
+                    // *** AUTOPLAY ATTEMPT IMPLEMENTATION ***
+                    audioPlayer.play().then(() => {
+                        // Autoplay successful: Update UI to playing state
+                        playIcon.classList.add('hidden');
+                        pauseIcon.classList.remove('hidden');
+                        console.log("Autoplay successful.");
+                    }).catch(error => {
+                        // Autoplay blocked: Leave UI in paused state, waiting for user click
+                        console.warn('Autoplay blocked by browser. Please click the play button to start the music.', error);
+                    });
+                }
             }
 
             // 1. Play/Pause functionality
             playPauseBtn.addEventListener('click', () => {
                 if (audioPlayer.paused) {
-                    audioPlayer.play().catch(error => {
-                        console.error('Playback failed. User interaction is often required to start media playback.', error);
+                    audioPlayer.play().then(() => {
+                        playIcon.classList.add('hidden');
+                        pauseIcon.classList.remove('hidden');
+                    }).catch(error => {
+                        // Log error if play fails even on user click (should be rare)
+                        console.error('Playback failed after user interaction.', error);
                     });
-                    playIcon.classList.add('hidden');
-                    pauseIcon.classList.remove('hidden');
                 } else {
                     audioPlayer.pause();
                     playIcon.classList.remove('hidden');
@@ -236,13 +255,13 @@
             prevBtn.addEventListener('click', () => {
                 // Decrement index, wrapping to the end if necessary
                 currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
-                loadSong(currentSongIndex);
+                loadSong(currentSongIndex, true); // Attempt to play the new song
             });
 
             nextBtn.addEventListener('click', () => {
                 // Increment index, wrapping to the start if necessary
                 currentSongIndex = (currentSongIndex + 1) % playlist.length;
-                loadSong(currentSongIndex);
+                loadSong(currentSongIndex, true); // Attempt to play the new song
             });
 
 
@@ -271,23 +290,21 @@
                 audioPlayer.currentTime = progressBar.value;
             });
 
-            // 5. Reset on End
+            // 5. Auto-advance on End
             audioPlayer.addEventListener('ended', () => {
                 // Automatically advance to the next song
                 currentSongIndex = (currentSongIndex + 1) % playlist.length;
-                loadSong(currentSongIndex);
-                audioPlayer.play(); // Start playing the next song immediately
-                playIcon.classList.add('hidden');
-                pauseIcon.classList.remove('hidden');
+                loadSong(currentSongIndex, true); // Load and automatically play the next song
             });
             
-            // Initial load of the first song
-            loadSong(currentSongIndex);
+            // *** INITIAL LOAD AND AUTOPLAY ATTEMPT ***
+            // Load the first song and immediately attempt to play it (true)
+            loadSong(currentSongIndex, true);
         });
     </script>
 </head>
 
-<body class="bg-discord-dark flex items-center justify-center min-h-screen p-4">
+<body class="bg-discord-dark flex items-center justify-center min-h-screen p-4 font-sans">
 
     <!-- HIDDEN AUDIO ELEMENT -->
     <audio id="audioPlayer"></audio>
@@ -298,7 +315,7 @@
 
     <!-- Profile Container (Simulating the modal/pop-up) -->
     <div class="profile-container transparent-card w-full max-w-xl rounded-2xl overflow-hidden my-4 shadow-2xl relative"
-         style="box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);">
+        style="box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);">
 
         <!-- Banner Section -->
         <div class="h-20 sm:h-32" style="background-color: #7289da;">
@@ -310,8 +327,8 @@
 
             <!-- Avatar -->
             <div class="relative w-24 h-24 sm:w-32 sm:h-32 -mt-12 sm:-mt-16 rounded-full avatar-shadow" 
-                 style="border: 6px solid rgba(47, 49, 54, 0.3);">
-                <img src="https://media.tenor.com/n-MeD5bxWmoAAAAe/mark-zuckerberg.png$0" alt="User Avatar"
+                style="border: 6px solid rgba(47, 49, 54, 0.3);">
+                <img src="https://media.tenor.com/n-MeD5bxWmoAAAAe/mark-zuckerberg.png" alt="User Avatar"
                     class="w-full h-full rounded-full object-cover">
                 <!-- Status Dot (Online) -->
                 <div class="status-dot bg-discord-green"></div>
@@ -374,7 +391,7 @@
 
                     <!-- Volume Control -->
                     <div class="flex items-center space-x-1 w-28 flex-shrink-0 ml-3">
-                         <!-- Volume Icon -->
+                        <!-- Volume Icon -->
                         <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.74 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                         <input type="range" id="volumeControl" value="50" min="0" max="100" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" style="accent-color: #5865f2;">
                     </div>
@@ -387,4 +404,3 @@
 
 </body>
 </html>
-        
