@@ -17,6 +17,8 @@
         /* Define the new, much higher transparency color for consistency (30% opacity) */
         :root {
             --transparent-bg: rgba(47, 49, 54, 0.3); 
+            /* New: Discord-like card background for the menu overlay (95% opaque) */
+            --menu-card-bg: rgba(47, 49, 54, 0.95);
         }
 
         /* BODY BACKGROUND: Updated for the GIF and overlay */
@@ -115,6 +117,43 @@
             background: #4f545c;
             border-radius: 4px;
         }
+
+        /* NEW: Styles for the Menu Overlay (Sidebar) */
+        #menuOverlay {
+            /* Use the same dark color but highly opaque for a strong menu */
+            background-color: var(--menu-card-bg); 
+            /* Apply glassmorphism effect to the menu itself */
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            /* Ensure fixed positioning and high z-index */
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px; /* Fixed width for the sidebar menu */
+            /* Default state: hidden off-screen */
+            transform: translateX(-100%); 
+            transition: transform 0.3s ease-in-out;
+            z-index: 50; /* Above main content */
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            /* Prevent scrolling on the page body when the menu is open */
+            overflow-y: auto; 
+        }
+        
+        /* State when menu is active */
+        #menuOverlay.open {
+            transform: translateX(0);
+        }
+
+        /* Menu Button position */
+        #menuButton {
+            position: fixed;
+            top: 1rem; /* 16px from top */
+            left: 1rem; /* 16px from left */
+            z-index: 60; /* Higher than overlay */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
     </style>
     <script>
         tailwind.config = {
@@ -136,6 +175,59 @@
                 }
             }
         }
+
+        // --- NEW: Menu Control Functions ---
+
+        /**
+         * Toggles the visibility of the menu overlay.
+         * @param {boolean} shouldOpen - true to open the menu, false to close.
+         */
+        function toggleMenu(shouldOpen) {
+            const overlay = document.getElementById('menuOverlay');
+            if (shouldOpen) {
+                overlay.classList.add('open');
+                // Optional: Disable main body scrolling when menu is open
+                document.body.style.overflow = 'hidden';
+            } else {
+                overlay.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }
+
+        /**
+         * Simulates a navigation action and closes the menu.
+         * @param {string} pageName - The name of the page being navigated to.
+         */
+        function handleNavigation(pageName) {
+            // In a real application, you would load a new page or change the view here.
+            console.log(`Simulating navigation to the "${pageName}" page.`);
+            
+            toggleMenu(false);
+
+            // You can add a temporary message to the main card for visual feedback
+            const mainCard = document.querySelector('.profile-container');
+            if (mainCard) {
+                // Find the main user info section to insert a temporary message
+                const userInfoSection = mainCard.querySelector('.p-4.pt-6.sm\\:p-6.sm\\:pt-8.pb-6');
+                
+                // Create the temporary message element
+                const tempMessage = document.createElement('div');
+                tempMessage.className = 'absolute top-0 left-0 right-0 p-3 bg-discord-blurple/80 text-white text-center font-semibold transition-all duration-300 transform translate-y-0 opacity-100 rounded-t-2xl';
+                tempMessage.textContent = `Redirecting to ${pageName} page... (Placeholder)`;
+
+                // Insert the message above the user info section
+                if (userInfoSection) {
+                    userInfoSection.prepend(tempMessage);
+                }
+
+                // Set a timeout to remove the message
+                setTimeout(() => {
+                    tempMessage.classList.add('opacity-0', '-translate-y-full'); // Start fade/slide out
+                    setTimeout(() => tempMessage.remove(), 300); // Remove element after transition
+                }, 2000); 
+            }
+        }
+
 
         // JavaScript for all dynamic functionality
         document.addEventListener('DOMContentLoaded', () => {
@@ -366,9 +458,48 @@
 
 <body class="flex items-center justify-center min-h-screen p-4 font-sans">
 
+    <!-- NEW: Menu Button (Fixed Top Left) -->
+    <button id="menuButton" onclick="toggleMenu(true)" class="fixed top-4 left-4 p-3 bg-gray-700/80 text-gray-300 rounded-lg hover:bg-gray-600/90 transition duration-200 active:scale-95 focus:outline-none focus:ring-4 focus:ring-discord-blurple/50" aria-label="Open Navigation Menu">
+        <!-- Hamburger Icon -->
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+
+    <!-- NEW: Menu Overlay (Slides in from the left) -->
+    <!-- FIX: Replaced p-6 with px-6 pt-20 pb-6 to push content down and clear the fixed #menuButton -->
+    <div id="menuOverlay" class="flex flex-col px-6 pt-20 pb-6 space-y-4">
+        
+        <div class="flex justify-between items-center pb-4 border-b border-gray-600/30">
+            <h2 class="text-xl font-bold text-white uppercase tracking-wider">Shotty08</h2>
+            <!-- Close Button -->
+            <button onclick="toggleMenu(false)" class="p-1 text-gray-400 hover:text-white transition-colors rounded-full focus:outline-none focus:ring-2 focus:ring-discord-blurple" aria-label="Close Menu">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+        </div>
+
+        <!-- Navigation Links (Placeholder buttons for you to change)(href=".html" to change page link) -->
+        <a href="#" onclick="handleNavigation('Home')" class="text-lg text-gray-200 font-medium hover:text-white hover:bg-gray-700/70 p-2 rounded-lg transition duration-150">
+            <span class="text-discord-blurple mr-3">•</span> Home
+        </a>
+        <a href="#" onclick="handleNavigation('Coming Soon')" class="text-lg text-gray-200 font-medium hover:text-white hover:bg-gray-700/70 p-2 rounded-lg transition duration-150">
+            <span class="text-discord-blurple mr-3">•</span> Coming Soon
+        </a>
+        <a href="#" onclick="handleNavigation('Coming Soon')" class="text-lg text-gray-200 font-medium hover:text-white hover:bg-gray-700/70 p-2 rounded-lg transition duration-150">
+            <span class="text-discord-blurple mr-3">•</span> Coming Soon
+        </a>
+        <a href="#" onclick="handleNavigation('Coming Soon')" class="text-lg text-gray-200 font-medium hover:text-white hover:bg-gray-700/70 p-2 rounded-lg transition duration-150">
+            <span class="text-discord-blurple mr-3">•</span> Coming Soon
+        </a>
+        <a href="#" onclick="handleNavigation('Coming Soon')" class="text-lg text-gray-200 font-medium hover:text-white hover:bg-gray-700/70 p-2 rounded-lg transition duration-150">
+            <span class="text-discord-blurple mr-3">•</span> Coming Soon
+        </a>
+    </div>
+    <!-- END NEW: Menu Overlay -->
+
+
     <!-- HIDDEN AUDIO ELEMENT --><audio id="audioPlayer"></audio>
 
-    <!-- Profile Container (Simulating the modal/pop-up) --><div class="profile-container transparent-card w-full max-w-xl rounded-2xl overflow-hidden my-4 shadow-2xl relative"
+    <!-- Profile Container (Simulating the modal/pop-up) -->
+    <div class="profile-container transparent-card w-full max-w-xl rounded-2xl overflow-hidden my-4 shadow-2xl relative"
         style="box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);">
 
         <!-- Avatar and Main Content (Top Half) -->
@@ -394,9 +525,9 @@
                     </div>
                     <!-- New Copy Button -->
                     <button id="copyUsernameBtn" 
-                            data-username="shotty08"
-                            title="Copy Discord Username"
-                            class="relative px-3 py-1 h-8 flex items-center justify-center rounded-full bg-gray-700/50 text-gray-300 hover:bg-gray-600/70 hover:text-white transition-all duration-200 text-sm font-semibold flex-shrink-0">
+                                data-username="shotty08"
+                                title="Copy Discord Username"
+                                class="relative px-3 py-1 h-8 flex items-center justify-center rounded-full bg-gray-700/50 text-gray-300 hover:bg-gray-600/70 hover:text-white transition-all duration-200 text-sm font-semibold flex-shrink-0">
                         <!-- Icon (default state) -->
                         <svg id="copyIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                         <!-- Text (success state, hidden initially) -->
