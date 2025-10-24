@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Profile Example</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define the new, much higher transparency color for consistency (30% opacity) */
+        :root {
+            --transparent-bg: rgba(47, 49, 54, 0.3); 
+        }
+
+        /* 1. Custom styles for the status indicator */
+        .status-dot {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            /* Using the new transparent color for a seamless look */
+            border: 4px solid var(--transparent-bg);
+            border-radius: 50%;
+            transform: translate(2px, 2px);
+        }
+
+        /* 2. Style for the cursor-reactive background effect */
+        #cursor-gradient {
+            /* Full screen, below everything else */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Ensures the gradient doesn't block clicks */
+            z-index: -1;
+            /* Initializing CSS variables */
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+            /* The actual moving gradient */
+            background: radial-gradient(
+                circle 120vh at var(--mouse-x) var(--mouse-y),
+                /* INCREASED GLOW: bumped up from 0.3/0.05 to 0.4/0.1 */
+                rgba(88, 101, 242, 0.4) 0%, /* Discord Blurple for the glow */
+                rgba(88, 101, 242, 0.1) 20%,
+                rgba(14, 17, 26, 0) 70% /* Fades to transparent */
+            );
+            /* Optional: Add a subtle transition for an extra smooth effect */
+            transition: background 0.1s ease-out;
+        }
+
+        /* 3. Discord-like shadow for the avatar */
+        .avatar-shadow {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
+        }
+
+        /* 4. Style for the main container on mobile */
+        @media (max-width: 640px) {
+            .profile-container {
+                margin: 0;
+                border-radius: 0;
+            }
+        }
+
+        /* 5. Custom style for the transparent, frosted card (Glassmorphism) */
+        .transparent-card {
+            /* Applied new 30% opacity */
+            background-color: var(--transparent-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); /* For Safari support */
+        }
+
+        /* 6. Custom styling for range inputs */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Scrollbar styling to match the dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0e111a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f545c;
+            border-radius: 4px;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Custom colors to better match the Discord palette
+                        'discord-bg': '#36393f', // Section background
+                        'discord-card': '#2f3136', // Original main card color
+                        'discord-dark': '#0e111a', // Very dark, clean body background
+                        'discord-blurple': '#5865f2',
+                        'discord-green': '#3ba55d',
+                        'discord-red': '#ed4245',
+                        'discord-yellow': '#faa61a',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+
+        // JavaScript for all dynamic functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Cursor Gradient Effect ---
+            const gradient = document.getElementById('cursor-gradient');
+            if (gradient) {
+                const handleMouseMove = (e) => {
+                    gradient.style.setProperty('--mouse-x', `${e.clientX}px`);
+                    gradient.style.setProperty('--mouse-y', `${e.clientY}px`);
+                };
+                document.addEventListener('mousemove', handleMouseMove);
+            }
+
+            // --- Fixed Music Player Logic ---
+            const audioPlayer = document.getElementById('audioPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+            const volumeControl = document.getElementById('volumeControl');
+            const progressBar = document.getElementById('progressBar');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (!audioPlayer || !playPauseBtn || !volumeControl || !progressBar || !prevBtn || !nextBtn) {
+                 console.error("One or more music player elements are missing.");
+                 return;
+            }
+            
+            // --- PLAYLIST DATA (Your "File" or Server Data) ---
+            const playlist = [
+                { 
+                    title: "Ascension", 
+                    artist: "Stellar Echoes", 
+                    audioUrl: "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3",
+                    coverUrl: "https://placehold.co/48x48/7289da/FFFFFF?text=AS" // Discord Blue cover
+                },
+                { 
+                    title: "Neon Drift", 
+                    artist: "Synthwave Collective", 
+                    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+                    coverUrl: "https://placehold.co/48x48/5865f2/FFFFFF?text=ND" // Blurple cover
+                },
+                { 
+                    title: "Quiet Dawn", 
+                    artist: "Lofi Vibes", 
+                    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3",
+                    coverUrl: "https://placehold.co/48x48/4f545c/FFFFFF?text=QD" // Grey cover
+                }
+            ];
+
+            let currentSongIndex = 0;
+
+            // Function to update all player elements for the current song
+            function loadSong(index) {
+                const song = playlist[index];
+                
+                // Update player sources
+                audioPlayer.src = song.audioUrl;
+                audioPlayer.load();
+
+                // Update display metadata
+                document.getElementById('songTitleDisplay').textContent = song.title;
+                document.getElementById('artistDisplay').textContent = song.artist;
+                document.getElementById('coverImage').src = song.coverUrl;
+                
+                // Reset buttons and state
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                audioPlayer.pause(); 
+            }
+
+            // 1. Play/Pause functionality
+            playPauseBtn.addEventListener('click', () => {
+                if (audioPlayer.paused) {
+                    audioPlayer.play().catch(error => {
+                        console.error('Playback failed. User interaction is often required to start media playback.', error);
+                    });
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                } else {
+                    audioPlayer.pause();
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                }
+            });
+
+            // 2. Previous/Next Control
+            prevBtn.addEventListener('click', () => {
+                // Decrement index, wrapping to the end if necessary
+                currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+                loadSong(currentSongIndex);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                // Increment index, wrapping to the start if necessary
+                currentSongIndex = (currentSongIndex + 1) % playlist.length;
+                loadSong(currentSongIndex);
+            });
+
+
+            // 3. Volume Control
+            volumeControl.addEventListener('input', () => {
+                // Volume range is 0 to 1. Input range is 0 to 100.
+                audioPlayer.volume = volumeControl.value / 100;
+            });
+            // Set initial volume
+            audioPlayer.volume = volumeControl.value / 100;
+
+
+            // 4. Progress Bar
+            audioPlayer.addEventListener('loadedmetadata', () => {
+                // Set max value of progress bar to the total duration of the song
+                progressBar.max = audioPlayer.duration;
+            });
+
+            audioPlayer.addEventListener('timeupdate', () => {
+                // Update progress bar as song plays
+                progressBar.value = audioPlayer.currentTime;
+            });
+
+            progressBar.addEventListener('input', () => {
+                // Allow user to seek (scrub)
+                audioPlayer.currentTime = progressBar.value;
+            });
+
+            // 5. Reset on End
+            audioPlayer.addEventListener('ended', () => {
+                // Automatically advance to the next song
+                currentSongIndex = (currentSongIndex + 1) % playlist.length;
+                loadSong(currentSongIndex);
+                audioPlayer.play(); // Start playing the next song immediately
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+            });
+            
+            // Initial load of the first song
+            loadSong(currentSongIndex);
+        });
+    </script>
+</head>
+
+<body class="bg-discord-dark flex items-center justify-center min-h-screen p-4">
+
+    <!-- HIDDEN AUDIO ELEMENT -->
+    <audio id="audioPlayer"></audio>
+
+
+    <!-- CURSOR REACTIVE BACKGROUND ELEMENT -->
+    <div id="cursor-gradient"></div>
+
+    <!-- Profile Container (Simulating the modal/pop-up) -->
+    <div class="profile-container transparent-card w-full max-w-xl rounded-2xl overflow-hidden my-4 shadow-2xl relative"
+         style="box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);">
+
+        <!-- Banner Section -->
+        <div class="h-20 sm:h-32" style="background-color: #7289da;">
+            <!-- Placeholder for banner image or color -->
+        </div>
+
+        <!-- Avatar and Main Content (Top Half) -->
+        <div class="p-4 pt-0 sm:p-6 sm:pt-0 pb-6 relative">
+
+            <!-- Avatar -->
+            <div class="relative w-24 h-24 sm:w-32 sm:h-32 -mt-12 sm:-mt-16 rounded-full avatar-shadow" 
+                 style="border: 6px solid rgba(47, 49, 54, 0.3);">
+                <img src="https://media.tenor.com/n-MeD5bxWmoAAAAe/mark-zuckerberg.png$0" alt="User Avatar"
+                    class="w-full h-full rounded-full object-cover">
+                <!-- Status Dot (Online) -->
+                <div class="status-dot bg-discord-green"></div>
+            </div>
+
+            <!-- User Info Section -->
+            <div class="mt-4">
+                <div class="text-white text-3xl font-extrabold tracking-wide">
+                    UserExample
+                    <span class="text-gray-400 font-normal text-xl">#0001</span>
+                </div>
+                <div class="text-sm text-gray-400 mt-2">
+                    <span class="bg-discord-blurple text-white px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md">NITRO SUBSCRIBER</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- PLAYLIST MUSIC PLAYER SECTION --- -->
+        <div class="px-6 pb-6 pt-4 border-t border-gray-600/30">
+            <h3 class="text-gray-300 font-semibold mb-3 text-sm uppercase tracking-wider">Now Playing (Playlist Mode)</h3>
+
+            <!-- Music Display & Controls -->
+            <div id="music-player" class="bg-gray-700/50 p-4 rounded-xl">
+                <div class="flex items-center space-x-4 mb-3">
+                    <!-- Cover Image -->
+                    <img id="coverImage" src="https://placehold.co/48x48/5865f2/FFFFFF?text=SONG" alt="Cover"
+                        class="w-12 h-12 rounded-lg flex-shrink-0 object-cover border border-gray-500/50">
+                    
+                    <!-- Song Info -->
+                    <div class="flex-grow min-w-0">
+                        <div id="songTitleDisplay" class="text-white text-sm font-semibold truncate">Kalimba (Royalty Free Track)</div>
+                        <div id="artistDisplay" class="text-gray-400 text-xs truncate">Bensound</div>
+                    </div>
+                </div>
+
+                <!-- Controls Bar -->
+                <div class="flex items-center space-x-3">
+                    <!-- Previous Button -->
+                    <button id="prevBtn" title="Previous" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                    </button>
+                    
+                    <!-- Play/Pause Button -->
+                    <button id="playPauseBtn" title="Play/Pause" class="p-2 bg-discord-blurple hover:bg-discord-blurple/80 transition rounded-full shadow-lg flex-shrink-0">
+                        <!-- SVG Icon for Play -->
+                        <svg id="playIcon" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 6v12l10-6z"/></svg>
+                        <!-- SVG Icon for Pause (hidden initially) -->
+                        <svg id="pauseIcon" class="w-6 h-6 text-white hidden" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h4v12H6zm8 0h4v12h-4z"/></svg>
+                    </button>
+                    
+                    <!-- Next Button -->
+                    <button id="nextBtn" title="Next" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
+                    </button>
+
+                    <!-- Progress Bar -->
+                    <div class="flex-grow">
+                        <input type="range" id="progressBar" value="0" min="0" max="100" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" style="accent-color: #5865f2;">
+                    </div>
+
+                    <!-- Volume Control -->
+                    <div class="flex items-center space-x-1 w-28 flex-shrink-0 ml-3">
+                         <!-- Volume Icon -->
+                        <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.74 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                        <input type="range" id="volumeControl" value="50" min="0" max="100" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" style="accent-color: #5865f2;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- --- END PLAYLIST MUSIC PLAYER SECTION --- -->
+
+    </div>
+
+</body>
+</html>
