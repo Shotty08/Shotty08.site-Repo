@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jakhe's Website</title>
-    <!-- Favicon: Using the same GIF for consistency in the browser tab -->
-    <link rel="icon" type="image/gif" href="https://cdn.shopify.com/s/files/1/0559/4788/6783/files/Noir_Boy.gif?v=1679069334">
+    <!-- 
+        FIX: The previous favicon GIF URL might be too large or complex for some browsers 
+        to render properly in the 16x16 tab icon.
+        We are replacing it with a small, compatible PNG placeholder icon.
+        If you want the GIF, you must ensure it's resized to 16x16 pixels. 
+    -->
+    <link rel="icon" type="image/png" href="https://placehold.co/16x16/5865f2/ffffff?text=JK">
     <!-- Load Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -303,6 +308,58 @@
             // *** INITIAL LOAD AND AUTOPLAY ATTEMPT ***
             // Load the first song and immediately attempt to play it (true)
             loadSong(currentSongIndex, true);
+
+            // --- Copy Username Logic (New) ---
+            const copyUsernameBtn = document.getElementById('copyUsernameBtn');
+            const copyIcon = document.getElementById('copyIcon');
+            const successText = document.getElementById('successText');
+            const usernameToCopy = copyUsernameBtn.getAttribute('data-username');
+            let notificationTimeout;
+
+            if (copyUsernameBtn) {
+                copyUsernameBtn.addEventListener('click', () => {
+                    // Use document.execCommand('copy') for wide compatibility
+                    const tempInput = document.createElement('textarea');
+                    tempInput.value = usernameToCopy;
+                    // Move the input off-screen to avoid visual disruption
+                    tempInput.style.position = 'absolute';
+                    tempInput.style.left = '-9999px';
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+
+                    try {
+                        document.execCommand('copy');
+                        
+                        // Success Notification UI Update
+                        copyIcon.classList.add('hidden'); // Hide the icon
+                        successText.classList.remove('hidden'); // Show the "Copied!" text
+                        
+                        // Change button style for success feedback
+                        copyUsernameBtn.classList.remove('bg-gray-700/50', 'hover:bg-gray-600/70', 'text-gray-300', 'hover:text-white');
+                        copyUsernameBtn.classList.add('bg-discord-green', 'hover:bg-discord-green/80', 'text-white');
+                        
+                        // Clear any existing timeout
+                        if (notificationTimeout) {
+                            clearTimeout(notificationTimeout);
+                        }
+
+                        // Set timeout to revert UI back
+                        notificationTimeout = setTimeout(() => {
+                            copyIcon.classList.remove('hidden'); // Show the icon
+                            successText.classList.add('hidden'); // Hide the "Copied!" text
+
+                            // Revert button style
+                            copyUsernameBtn.classList.add('bg-gray-700/50', 'hover:bg-gray-600/70', 'text-gray-300', 'hover:text-white');
+                            copyUsernameBtn.classList.remove('bg-discord-green', 'hover:bg-discord-green/80', 'text-white');
+                        }, 2000); // Show notification for 2 seconds
+
+                    } catch (err) {
+                        console.error('Failed to copy text: ', err);
+                    } finally {
+                        document.body.removeChild(tempInput);
+                    }
+                });
+            }
         });
     </script>
 </head>
@@ -330,14 +387,27 @@
 
             <!-- User Info Section -->
             <div class="mt-4">
-                <div class="text-white text-3xl font-extrabold tracking-wide">
-                    Shotty08
-                    <span class="text-gray-400 font-normal text-xl">#TheGoat</span>
+                <div class="flex items-center space-x-3">
+                    <div class="text-white text-3xl font-extrabold tracking-wide whitespace-nowrap">
+                        Shotty08
+                        <span class="text-gray-400 font-normal text-xl">#TheGoat</span>
+                    </div>
+                    <!-- New Copy Button -->
+                    <button id="copyUsernameBtn" 
+                            data-username="Shotty08#TheGoat"
+                            title="Copy Discord Username"
+                            class="relative px-3 py-1 h-8 flex items-center justify-center rounded-full bg-gray-700/50 text-gray-300 hover:bg-gray-600/70 hover:text-white transition-all duration-200 text-sm font-semibold flex-shrink-0">
+                        <!-- Icon (default state) -->
+                        <svg id="copyIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        <!-- Text (success state, hidden initially) -->
+                        <span id="successText" class="hidden">Copied!</span>
+                    </button>
                 </div>
                 <div class="text-sm text-gray-400 mt-2">
-                    <span class="bg-discord-blurple text-white px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md">Creater</span>
+                    <span class="bg-discord-blurple text-white px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md">Owner</span>
                 </div>
             </div>
+
         </div>
 
         <!-- --- PLAYLIST MUSIC PLAYER SECTION --- -->
