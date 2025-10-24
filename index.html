@@ -1,476 +1,469 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jakhe's Website</title>
-        <link rel="icon" type="image/png" href="https://placehold.co/16x16/5865f2/ffffff?text=JK">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Define the new, much higher transparency color for consistency (30% opacity) */
-        :root {
-            --transparent-bg: rgba(47, 49, 54, 0.3); 
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jakhe's Website</title>
+    <!-- 
+        FIX: The previous favicon GIF URL might be too large or complex for some browsers 
+        to render properly in the 16x16 tab icon.
+        We are replacing it with a small, compatible PNG placeholder icon.
+        If you want the GIF, you must ensure it's resized to 16x16 pixels. 
+    -->
+    <link rel="icon" type="image/png" href="https://placehold.co/16x16/5865f2/ffffff?text=JK">
+    <!-- Load Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define the new, much higher transparency color for consistency (30% opacity) */
+        :root {
+            --transparent-bg: rgba(47, 49, 54, 0.3); 
+        }
 
-        /* BODY BACKGROUND: Updated for the GIF and overlay */
-        body {
-            /* FIX APPLIED HERE: Added solid dark background as a fallback */
-            background-color: #0e111a; 
-            /* *** UPDATED: Using the provided direct GIF URL *** */
-            background-image: url('https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNndrYXY5c2VjMnp5NWFjNTlxaWZoaHlrcGhqOTVmZzV4NG9tcGZlNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YkOInyW8oZHPvI8aDW/giphy.gif'); 
-            background-size: cover; /* Cover the entire viewport */
-            background-position: center center; /* Center the GIF */
-            background-repeat: no-repeat; /* Don't repeat the GIF */
-            background-attachment: fixed; /* Keep it fixed when scrolling */
-            position: relative;
-            min-height: 100vh; /* Ensure body takes full height */
-            font-family: 'Inter', sans-serif; /* Set default font */
-        }
-        /* Semi-transparent overlay for readability */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            /* Reduced opacity for a clearer background */
-            background-color: rgba(0, 0, 0, 0.2); 
-            z-index: -2; /* Below content, above GIF */
-        }
+        /* BODY BACKGROUND: Updated for the GIF and overlay */
+        body {
+            /* FIX APPLIED HERE: Added solid dark background as a fallback */
+            background-color: #0e111a; 
+            /* *** UPDATED: Using the provided direct GIF URL *** */
+            background-image: url('https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNndrYXY5c2VjMnp5NWFjNTlxaWZoaHlrcGhqOTVmZzV4NG9tcGZlNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YkOInyW8oZHPvI8aDW/giphy.gif'); 
+            background-size: cover; /* Cover the entire viewport */
+            background-position: center center; /* Center the GIF */
+            background-repeat: no-repeat; /* Don't repeat the GIF */
+            background-attachment: fixed; /* Keep it fixed when scrolling */
+            position: relative;
+            min-height: 100vh; /* Ensure body takes full height */
+            font-family: 'Inter', sans-serif; /* Set default font */
+        }
+        /* Semi-transparent overlay for readability */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Reduced opacity for a clearer background */
+            background-color: rgba(0, 0, 0, 0.2); 
+            z-index: -2; /* Below content, above GIF */
+        }
 
-        /* 1. Custom styles for the status indicator */
-        .status-dot {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 14px;
-            height: 14px;
-            /* Using the new transparent color for a seamless look */
-            border: 4px solid var(--transparent-bg);
-            border-radius: 50%;
-            transform: translate(2px, 2px);
-        }
+        /* 1. Custom styles for the status indicator */
+        .status-dot {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            /* Using the new transparent color for a seamless look */
+            border: 4px solid var(--transparent-bg);
+            border-radius: 50%;
+            transform: translate(2px, 2px);
+        }
 
-        /* CURSOR TRACER: New styles for the tracer elements */
-        .cursor-tracer-dot {
-            position: fixed;
-            background-color: rgba(88, 101, 242, 0.8); /* Discord Blurple, semi-transparent */
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999; /* Ensure it's above everything else */
-            transition: all 0.5s ease-out, opacity 0.7s ease-out; /* Fade out faster, shrink slowly */
-            opacity: 0; /* Start invisible */
-            transform: scale(0); /* Start very small */
-        }
+        /* CURSOR TRACER: New styles for the tracer elements */
+        .cursor-tracer-dot {
+            position: fixed;
+            background-color: rgba(88, 101, 242, 0.8); /* Discord Blurple, semi-transparent */
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999; /* Ensure it's above everything else */
+            transition: all 0.5s ease-out, opacity 0.7s ease-out; /* Fade out faster, shrink slowly */
+            opacity: 0; /* Start invisible */
+            transform: scale(0); /* Start very small */
+        }
 
-        /* 3. Discord-like shadow for the avatar */
-        .avatar-shadow {
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
-        }
+        /* 3. Discord-like shadow for the avatar */
+        .avatar-shadow {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
+        }
 
-        /* 4. Style for the main container on mobile */
-        @media (max-width: 640px) {
-            .profile-container {
-                margin: 0;
-                border-radius: 0;
-            }
-        }
+        /* 4. Style for the main container on mobile */
+        @media (max-width: 640px) {
+            .profile-container {
+                margin: 0;
+                border-radius: 0;
+            }
+        }
 
-        /* 5. Custom style for the transparent, frosted card (Glassmorphism) */
-        .transparent-card {
-            /* Applied new 30% opacity */
-            background-color: var(--transparent-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px); /* For Safari support */
-        }
+        /* 5. Custom style for the transparent, frosted card (Glassmorphism) */
+        .transparent-card {
+            /* Applied new 30% opacity */
+            background-color: var(--transparent-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); /* For Safari support */
+        }
 
-        /* 6. Custom styling for range inputs */
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ffffff;
-            cursor: pointer;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
+        /* 6. Custom styling for range inputs */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
 
-        /* Scrollbar styling to match the dark theme */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0e111a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4f545c;
-            border-radius: 4px;
-        }
-    </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        // Custom colors to better match the Discord palette
-                        'discord-bg': '#36393f', // Section background
-                        'discord-card': '#2f3136', // Original main card color
-                        'discord-dark': '#0e111a', // Very dark, clean body background
-                        'discord-blurple': '#5865f2',
-                        'discord-green': '#3ba55d',
-                        'discord-red': '#ed4245',
-                        'discord-yellow': '#faa61a',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
+        /* Scrollbar styling to match the dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0e111a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f545c;
+            border-radius: 4px;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Custom colors to better match the Discord palette
+                        'discord-bg': '#36393f', // Section background
+                        'discord-card': '#2f3136', // Original main card color
+                        'discord-dark': '#0e111a', // Very dark, clean body background
+                        'discord-blurple': '#5865f2',
+                        'discord-green': '#3ba55d',
+                        'discord-red': '#ed4245',
+                        'discord-yellow': '#faa61a',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
 
-        // JavaScript for all dynamic functionality
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- MENU TOGGLE LOGIC (NEW) ---
-            const menuBtn = document.getElementById('menuBtn');
-            const menuDropdown = document.getElementById('menuDropdown');
+        // JavaScript for all dynamic functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CURSOR TRACER EFFECT ---
+            document.addEventListener('mousemove', (e) => {
+                const dot = document.createElement('div');
+                dot.className = 'cursor-tracer-dot';
+                // Adjust size and initial opacity
+                const size = Math.random() * 8 + 5; // Random size between 5px and 13px
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.left = `${e.clientX - size / 2}px`;
+                dot.style.top = `${e.clientY - size / 2}px`;
+                dot.style.opacity = '1'; // Start fully opaque
+                dot.style.transform = 'scale(1)'; // Start at full size
 
-            menuBtn.addEventListener('click', () => {
-                menuDropdown.classList.toggle('hidden');
-            });
-            
-            // Close dropdown if the user clicks outside of it
-            document.addEventListener('click', (event) => {
-                if (!menuDropdown.contains(event.target) && !menuBtn.contains(event.target)) {
-                    menuDropdown.classList.add('hidden');
-                }
-            });
+                document.body.appendChild(dot);
 
-            // --- CURSOR TRACER EFFECT ---
-            document.addEventListener('mousemove', (e) => {
-                const dot = document.createElement('div');
-                dot.className = 'cursor-tracer-dot';
-                // Adjust size and initial opacity
-                const size = Math.random() * 8 + 5; // Random size between 5px and 13px
-                dot.style.width = `${size}px`;
-                dot.style.height = `${size}px`;
-                dot.style.left = `${e.clientX - size / 2}px`;
-                dot.style.top = `${e.clientY - size / 2}px`;
-                dot.style.opacity = '1'; // Start fully opaque
-                dot.style.transform = 'scale(1)'; // Start at full size
+                // Animate fading and shrinking
+                setTimeout(() => {
+                    dot.style.opacity = '0';
+                    dot.style.transform = 'scale(0.1)'; // Shrink to a small size
+                }, 50); // Start fading/shrinking almost immediately after creation
 
-                document.body.appendChild(dot);
+                // Remove the dot after its transition finishes
+                setTimeout(() => {
+                    dot.remove();
+                }, 600); // Should match the transition duration (0.5s + small buffer)
+            });
 
-                // Animate fading and shrinking
-                setTimeout(() => {
-                    dot.style.opacity = '0';
-                    dot.style.transform = 'scale(0.1)'; // Shrink to a small size
-                }, 50); // Start fading/shrinking almost immediately after creation
+            // --- Fixed Music Player Logic ---
+            const audioPlayer = document.getElementById('audioPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+            const volumeControl = document.getElementById('volumeControl');
+            const progressBar = document.getElementById('progressBar');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
 
-                // Remove the dot after its transition finishes
-                setTimeout(() => {
-                    dot.remove();
-                }, 600); // Should match the transition duration (0.5s + small buffer)
-            });
+            if (!audioPlayer || !playPauseBtn || !volumeControl || !progressBar || !prevBtn || !nextBtn) {
+                console.error("One or more music player elements are missing.");
+                return;
+            }
+            
+            // --- PLAYLIST DATA (Your "File" or Server Data) ---
+            const playlist = [
+                { 
+                    title: "Girls Want Girls", 
+                    artist: "Drake x Lil Baby", 
+                    // Note: This link is provided by the user and is assumed to be working
+                    audioUrl: "https://dl.dropboxusercontent.com/scl/fi/60ie59qqggj10hfn9bps7/Drake-Girls-Want-Girls-Audio-ft.-Lil-Baby.mp3?rlkey=lufwfbw3wgh7qs60y096mkuzw&st=2wvt3x7r&dl=0",
+                    coverUrl: "https://dl.dropboxusercontent.com/scl/fi/8j4f0c1yuyidh29y5wsac/maxresdefault.jpg?rlkey=86evp0amuw5d687aydxocrf0a&st=50ib6n2t&dl=0" 
+                },
+                { 
+                    title: "Neon Drift", 
+                    artist: "Synthwave Collective", 
+                    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+                    coverUrl: "https://placehold.co/48x48/5865f2/FFFFFF?text=ND" 
+                },
+                { 
+                    title: "Quiet Dawn", 
+                    artist: "Lofi Vibes", 
+                    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3",
+                    coverUrl: "https://placehold.co/48x48/4f545c/FFFFFF?text=QD" 
+                }
+            ];
 
-            // --- Fixed Music Player Logic ---
-            const audioPlayer = document.getElementById('audioPlayer');
-            const playPauseBtn = document.getElementById('playPauseBtn');
-            const playIcon = document.getElementById('playIcon');
-            const pauseIcon = document.getElementById('pauseIcon');
-            const volumeControl = document.getElementById('volumeControl');
-            const progressBar = document.getElementById('progressBar');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
+            let currentSongIndex = 0;
 
-            if (!audioPlayer || !playPauseBtn || !volumeControl || !progressBar || !prevBtn || !nextBtn) {
-                console.error("One or more music player elements are missing.");
-                return;
-            }
-            
-            // --- PLAYLIST DATA (Your "File" or Server Data) ---
-            const playlist = [
-                { 
-                    title: "Girls Want Girls", 
-                    artist: "Drake x Lil Baby", 
-                    // Note: This link is provided by the user and is assumed to be working
-                    audioUrl: "https://dl.dropboxusercontent.com/scl/fi/60ie59qqggj10hfn9bps7/Drake-Girls-Want-Girls-Audio-ft.-Lil-Baby.mp3?rlkey=lufwfbw3wgh7qs60y096mkuzw&st=2wvt3x7r&dl=0",
-                    coverUrl: "https://dl.dropboxusercontent.com/scl/fi/8j4f0c1yuyidh29y5wsac/maxresdefault.jpg?rlkey=86evp0amuw5d687aydxocrf0a&st=50ib6n2t&dl=0" 
-                },
-                { 
-                    title: "Neon Drift", 
-                    artist: "Synthwave Collective", 
-                    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-                    coverUrl: "https://placehold.co/48x48/5865f2/FFFFFF?text=ND" 
-                },
-                { 
-                    title: "Quiet Dawn", 
-                    artist: "Lofi Vibes", 
-                    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3",
-                    coverUrl: "https://placehold.co/48x48/4f545c/FFFFFF?text=QD" 
-                }
-            ];
+            /**
+             * Function to load a song and optionally attempt to start playback immediately.
+             * @param {number} index - The index of the song in the playlist.
+             * @param {boolean} shouldAttemptPlay - Whether to try starting playback immediately.
+             */
+            function loadSong(index, shouldAttemptPlay = false) {
+                const song = playlist[index];
+                
+                // Update player sources
+                audioPlayer.src = song.audioUrl;
+                audioPlayer.load();
 
-            let currentSongIndex = 0;
+                // Update display metadata
+                document.getElementById('songTitleDisplay').textContent = song.title;
+                document.getElementById('artistDisplay').textContent = song.artist;
+                document.getElementById('coverImage').src = song.coverUrl;
+                
+                // Reset buttons to Paused state by default
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                audioPlayer.pause(); 
 
-            /**
-             * Function to load a song and optionally attempt to start playback immediately.
-             * @param {number} index - The index of the song in the playlist.
-             * @param {boolean} shouldAttemptPlay - Whether to try starting playback immediately.
-             */
-            function loadSong(index, shouldAttemptPlay = false) {
-                const song = playlist[index];
-                
-                // Update player sources
-                audioPlayer.src = song.audioUrl;
-                audioPlayer.load();
+                if (shouldAttemptPlay) {
+                    // *** AUTOPLAY ATTEMPT IMPLEMENTATION ***
+                    audioPlayer.play().then(() => {
+                        // Autoplay successful: Update UI to playing state
+                        playIcon.classList.add('hidden');
+                        pauseIcon.classList.remove('hidden');
+                        console.log("Autoplay successful.");
+                    }).catch(error => {
+                        // Autoplay blocked: Leave UI in paused state, waiting for user click
+                        console.warn('Autoplay blocked by browser. Please click the play button to start the music.', error);
+                    });
+                }
+            }
 
-                // Update display metadata
-                document.getElementById('songTitleDisplay').textContent = song.title;
-                document.getElementById('artistDisplay').textContent = song.artist;
-                document.getElementById('coverImage').src = song.coverUrl;
-                
-                // Reset buttons to Paused state by default
-                playIcon.classList.remove('hidden');
-                pauseIcon.classList.add('hidden');
-                audioPlayer.pause(); 
+            // 1. Play/Pause functionality
+            playPauseBtn.addEventListener('click', () => {
+                if (audioPlayer.paused) {
+                    audioPlayer.play().then(() => {
+                        playIcon.classList.add('hidden');
+                        pauseIcon.classList.remove('hidden');
+                    }).catch(error => {
+                        // Log error if play fails even on user click (should be rare)
+                        console.error('Playback failed after user interaction.', error);
+                    });
+                } else {
+                    audioPlayer.pause();
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                }
+            });
 
-                if (shouldAttemptPlay) {
-                    // *** AUTOPLAY ATTEMPT IMPLEMENTATION ***
-                    audioPlayer.play().then(() => {
-                        // Autoplay successful: Update UI to playing state
-                        playIcon.classList.add('hidden');
-                        pauseIcon.classList.remove('hidden');
-                        console.log("Autoplay successful.");
-                    }).catch(error => {
-                        // Autoplay blocked: Leave UI in paused state, waiting for user click
-                        console.warn('Autoplay blocked by browser. Please click the play button to start the music.', error);
-                    });
-                }
-            }
+            // 2. Previous/Next Control
+            prevBtn.addEventListener('click', () => {
+                // Decrement index, wrapping to the end if necessary
+                currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+                loadSong(currentSongIndex, true); // Attempt to play the new song
+            });
 
-            // 1. Play/Pause functionality
-            playPauseBtn.addEventListener('click', () => {
-                if (audioPlayer.paused) {
-                    audioPlayer.play().then(() => {
-                        playIcon.classList.add('hidden');
-                        pauseIcon.classList.remove('hidden');
-                    }).catch(error => {
-                        // Log error if play fails even on user click (should be rare)
-                        console.error('Playback failed after user interaction.', error);
-                    });
-                } else {
-                    audioPlayer.pause();
-                    playIcon.classList.remove('hidden');
-                    pauseIcon.classList.add('hidden');
-                }
-            });
-
-            // 2. Previous/Next Control
-            prevBtn.addEventListener('click', () => {
-                // Decrement index, wrapping to the end if necessary
-                currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
-                loadSong(currentSongIndex, true); // Attempt to play the new song
-            });
-
-            nextBtn.addEventListener('click', () => {
-                // Increment index, wrapping to the start if necessary
-                currentSongIndex = (currentSongIndex + 1) % playlist.length;
-                loadSong(currentSongIndex, true); // Attempt to play the new song
-            });
+            nextBtn.addEventListener('click', () => {
+                // Increment index, wrapping to the start if necessary
+                currentSongIndex = (currentSongIndex + 1) % playlist.length;
+                loadSong(currentSongIndex, true); // Attempt to play the new song
+            });
 
 
-            // 3. Volume Control
-            volumeControl.addEventListener('input', () => {
-                // Volume range is 0 to 1. Input range is 0 to 100.
-                audioPlayer.volume = volumeControl.value / 100;
-            });
-            // Set initial volume
-            audioPlayer.volume = volumeControl.value / 100;
+            // 3. Volume Control
+            volumeControl.addEventListener('input', () => {
+                // Volume range is 0 to 1. Input range is 0 to 100.
+                audioPlayer.volume = volumeControl.value / 100;
+            });
+            // Set initial volume
+            audioPlayer.volume = volumeControl.value / 100;
 
 
-            // 4. Progress Bar
-            audioPlayer.addEventListener('loadedmetadata', () => {
-                // Set max value of progress bar to the total duration of the song
-                progressBar.max = audioPlayer.duration;
-            });
+            // 4. Progress Bar
+            audioPlayer.addEventListener('loadedmetadata', () => {
+                // Set max value of progress bar to the total duration of the song
+                progressBar.max = audioPlayer.duration;
+            });
 
-            audioPlayer.addEventListener('timeupdate', () => {
-                // Update progress bar as song plays
-                progressBar.value = audioPlayer.currentTime;
-            });
+            audioPlayer.addEventListener('timeupdate', () => {
+                // Update progress bar as song plays
+                progressBar.value = audioPlayer.currentTime;
+            });
 
-            progressBar.addEventListener('input', () => {
-                // Allow user to seek (scrub)
-                audioPlayer.currentTime = progressBar.value;
-            });
+            progressBar.addEventListener('input', () => {
+                // Allow user to seek (scrub)
+                audioPlayer.currentTime = progressBar.value;
+            });
 
-            // 5. Auto-advance on End
-            audioPlayer.addEventListener('ended', () => {
-                // Automatically advance to the next song
-                currentSongIndex = (currentSongIndex + 1) % playlist.length;
-                loadSong(currentSongIndex, true); // Load and automatically play the next song
-            });
-            
-            // *** INITIAL LOAD AND AUTOPLAY ATTEMPT ***
-            // Load the first song and immediately attempt to play it (true)
-            loadSong(currentSongIndex, true);
+            // 5. Auto-advance on End
+            audioPlayer.addEventListener('ended', () => {
+                // Automatically advance to the next song
+                currentSongIndex = (currentSongIndex + 1) % playlist.length;
+                loadSong(currentSongIndex, true); // Load and automatically play the next song
+            });
+            
+            // *** INITIAL LOAD AND AUTOPLAY ATTEMPT ***
+            // Load the first song and immediately attempt to play it (true)
+            loadSong(currentSongIndex, true);
 
-            // --- Copy Username Logic (New) ---
-            const copyUsernameBtn = document.getElementById('copyUsernameBtn');
-            const copyIcon = document.getElementById('copyIcon');
-            const successText = document.getElementById('successText');
-            const usernameToCopy = copyUsernameBtn.getAttribute('data-username');
-            let notificationTimeout;
+            // --- Copy Username Logic (New) ---
+            const copyUsernameBtn = document.getElementById('copyUsernameBtn');
+            const copyIcon = document.getElementById('copyIcon');
+            const successText = document.getElementById('successText');
+            const usernameToCopy = copyUsernameBtn.getAttribute('data-username');
+            let notificationTimeout;
 
-            if (copyUsernameBtn) {
-                copyUsernameBtn.addEventListener('click', () => {
-                    // Use document.execCommand('copy') for wide compatibility
-                    const tempInput = document.createElement('textarea');
-                    tempInput.value = usernameToCopy;
-                    // Move the input off-screen to avoid visual disruption
-                    tempInput.style.position = 'absolute';
-                    tempInput.style.left = '-9999px';
-                    document.body.appendChild(tempInput);
-                    tempInput.select();
+            if (copyUsernameBtn) {
+                copyUsernameBtn.addEventListener('click', () => {
+                    // Use document.execCommand('copy') for wide compatibility
+                    const tempInput = document.createElement('textarea');
+                    tempInput.value = usernameToCopy;
+                    // Move the input off-screen to avoid visual disruption
+                    tempInput.style.position = 'absolute';
+                    tempInput.style.left = '-9999px';
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
 
-                    try {
-                        document.execCommand('copy');
-                        
-                        // Success Notification UI Update
-                        copyIcon.classList.add('hidden'); // Hide the icon
-                        successText.classList.remove('hidden'); // Show the "Copied!" text
-                        
-                        // Change button style for success feedback
-                        copyUsernameBtn.classList.remove('bg-gray-700/50', 'hover:bg-gray-600/70', 'text-gray-300', 'hover:text-white');
-                        copyUsernameBtn.classList.add('bg-discord-green', 'hover:bg-discord-green/80', 'text-white');
-                        
-                        // Clear any existing timeout
-                        if (notificationTimeout) {
-                            clearTimeout(notificationTimeout);
-                        }
+                    try {
+                        document.execCommand('copy');
+                        
+                        // Success Notification UI Update
+                        copyIcon.classList.add('hidden'); // Hide the icon
+                        successText.classList.remove('hidden'); // Show the "Copied!" text
+                        
+                        // Change button style for success feedback
+                        copyUsernameBtn.classList.remove('bg-gray-700/50', 'hover:bg-gray-600/70', 'text-gray-300', 'hover:text-white');
+                        copyUsernameBtn.classList.add('bg-discord-green', 'hover:bg-discord-green/80', 'text-white');
+                        
+                        // Clear any existing timeout
+                        if (notificationTimeout) {
+                            clearTimeout(notificationTimeout);
+                        }
 
-                        // Set timeout to revert UI back
-                        notificationTimeout = setTimeout(() => {
-                            copyIcon.classList.remove('hidden'); // Show the icon
-                            successText.classList.add('hidden'); // Hide the "Copied!" text
+                        // Set timeout to revert UI back
+                        notificationTimeout = setTimeout(() => {
+                            copyIcon.classList.remove('hidden'); // Show the icon
+                            successText.classList.add('hidden'); // Hide the "Copied!" text
 
-                            // Revert button style
-                            copyUsernameBtn.classList.add('bg-gray-700/50', 'hover:bg-gray-600/70', 'text-gray-300', 'hover:text-white');
-                            copyUsernameBtn.classList.remove('bg-discord-green', 'hover:bg-discord-green/80', 'text-white');
-                        }, 2000); // Show notification for 2 seconds
+                            // Revert button style
+                            copyUsernameBtn.classList.add('bg-gray-700/50', 'hover:bg-gray-600/70', 'text-gray-300', 'hover:text-white');
+                            copyUsernameBtn.classList.remove('bg-discord-green', 'hover:bg-discord-green/80', 'text-white');
+                        }, 2000); // Show notification for 2 seconds
 
-                    } catch (err) {
-                        console.error('Failed to copy text: ', err);
-                    } finally {
-                        document.body.removeChild(tempInput);
-                    }
-                });
-            }
-        });
-    </script>
+                    } catch (err) {
+                        console.error('Failed to copy text: ', err);
+                    } finally {
+                        document.body.removeChild(tempInput);
+                    }
+                });
+            }
+        });
+    </script>
 </head>
 
 <body class="flex items-center justify-center min-h-screen p-4 font-sans">
 
-        <div class="fixed top-4 left-4 z-50">
-                <button id="menuBtn" title="Menu" class="p-3 bg-gray-700/50 hover:bg-gray-600/70 text-white rounded-full transition duration-150 transparent-card shadow-lg"
-            style="border: 1px solid rgba(255, 255, 255, 0.1);">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
+    <!-- HIDDEN AUDIO ELEMENT --><audio id="audioPlayer"></audio>
 
-                <div id="menuDropdown" class="hidden absolute top-full left-0 mt-2 w-48 transparent-card rounded-lg shadow-xl overflow-hidden"
-            style="border: 1px solid rgba(255, 255, 255, 0.1);">
-            <a href="https://blog.jakhe.com" target="_blank" class="block px-4 py-2 text-gray-200 hover:bg-gray-700/80 transition duration-100">
-                📰 Blog <span class="text-xs text-gray-500">(subdomain)</span>
-            </a>
-            <a href="https://portfolio.jakhe.com" target="_blank" class="block px-4 py-2 text-gray-200 hover:bg-gray-700/80 transition duration-100">
-                💼 Portfolio <span class="text-xs text-gray-500">(subdomain)</span>
-            </a>
-            <a href="https://shop.jakhe.com" target="_blank" class="block px-4 py-2 text-gray-200 hover:bg-gray-700/80 transition duration-100">
-                🛒 Shop <span class="text-xs text-gray-500">(subdomain)</span>
-            </a>
-        </div>
-    </div>
-        <audio id="audioPlayer"></audio>
+    <!-- Profile Container (Simulating the modal/pop-up) --><div class="profile-container transparent-card w-full max-w-xl rounded-2xl overflow-hidden my-4 shadow-2xl relative"
+        style="box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);">
 
-    <div class="profile-container transparent-card w-full max-w-xl rounded-2xl overflow-hidden my-4 shadow-2xl relative"
-        style="box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);">
+        <!-- Avatar and Main Content (Top Half) -->
+        <!-- Adjusted padding (pt-6/pt-8) since the banner is removed -->
+        <div class="p-4 pt-6 sm:p-6 sm:pt-8 pb-6 relative"> 
 
-                        <div class="p-4 pt-6 sm:p-6 sm:pt-8 pb-6 relative"> 
+            <!-- Avatar/Profile Picture -->
+            <div class="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full avatar-shadow" 
+                style="border: 6px solid rgba(47, 49, 54, 0.3);">
+                <!-- Profile Picture --> 
+                <img src="https://cdn.shopify.com/s/files/1/0559/4788/6783/files/Noir_Boy.gif?v=1679069334" alt="User Avatar"
+                    class="w-full h-full rounded-full object-cover">
+                <!-- Status Dot (Online) -->
+                <div class="status-dot bg-discord-green"></div>
+            </div>
 
-                        <div class="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full avatar-shadow" 
-                style="border: 6px solid rgba(47, 49, 54, 0.3);">
-                 
-                <img src="https://cdn.shopify.com/s/files/1/0559/4788/6783/files/Noir_Boy.gif?v=1679069334" alt="User Avatar"
-                    class="w-full h-full rounded-full object-cover">
-                                <div class="status-dot bg-discord-green"></div>
-            </div>
+            <!-- User Info Section -->
+            <div class="mt-4">
+                <div class="flex items-center space-x-3">
+                    <div class="text-white text-3xl font-extrabold tracking-wide whitespace-nowrap">
+                        Shotty08
+                        <span class="text-gray-400 font-normal text-xl">#TheGoat</span>
+                    </div>
+                    <!-- New Copy Button -->
+                    <button id="copyUsernameBtn" 
+                            data-username="shotty08"
+                            title="Copy Discord Username"
+                            class="relative px-3 py-1 h-8 flex items-center justify-center rounded-full bg-gray-700/50 text-gray-300 hover:bg-gray-600/70 hover:text-white transition-all duration-200 text-sm font-semibold flex-shrink-0">
+                        <!-- Icon (default state) -->
+                        <svg id="copyIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        <!-- Text (success state, hidden initially) -->
+                        <span id="successText" class="hidden">Copied Discord!</span>
+                    </button>
+                </div>
+                <div class="text-sm text-gray-400 mt-2">
+                    <span class="bg-discord-blurple text-white px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md">Owner</span>
+                </div>
+            </div>
 
-                        <div class="mt-4">
-                <div class="flex items-center space-x-3">
-                    <div class="text-white text-3xl font-extrabold tracking-wide whitespace-nowrap">
-                        Shotty08
-                        <span class="text-gray-400 font-normal text-xl">#TheGoat</span>
-                    </div>
-                                        <button id="copyUsernameBtn" 
-                            data-username="shotty08"
-                            title="Copy Discord Username"
-                            class="relative px-3 py-1 h-8 flex items-center justify-center rounded-full bg-gray-700/50 text-gray-300 hover:bg-gray-600/70 hover:text-white transition-all duration-200 text-sm font-semibold flex-shrink-0">
-                                                <svg id="copyIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                                                <span id="successText" class="hidden">Copied Discord!</span>
-                    </button>
-                </div>
-                <div class="text-sm text-gray-400 mt-2">
-                    <span class="bg-discord-blurple text-white px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md">Owner</span>
-                </div>
-            </div>
+        </div>
 
-        </div>
+        <!-- --- PLAYLIST MUSIC PLAYER SECTION --- -->
+        <div class="px-6 pb-6 pt-4 border-t border-gray-600/30">
+            <h3 class="text-gray-300 font-semibold mb-3 text-sm uppercase tracking-wider">Now Playing (Playlist Mode)</h3>
 
-                <div class="px-6 pb-6 pt-4 border-t border-gray-600/30">
-            <h3 class="text-gray-300 font-semibold mb-3 text-sm uppercase tracking-wider">Now Playing (Playlist Mode)</h3>
+            <!-- Music Display & Controls -->
+            <div id="music-player" class="bg-gray-700/50 p-4 rounded-xl">
+                <div class="flex items-center space-x-4 mb-3">
+                    <!-- Cover Image -->
+                    <img id="coverImage" src="https://placehold.co/48x48/5865f2/FFFFFF?text=SONG" alt="Cover"
+                        class="w-12 h-12 rounded-lg flex-shrink-0 object-cover border border-gray-500/50">
+                    
+                    <!-- Song Info -->
+                    <div class="flex-grow min-w-0">
+                        <div id="songTitleDisplay" class="text-white text-sm font-semibold truncate">Kalimba (Royalty Free Track)</div>
+                        <div id="artistDisplay" class="text-gray-400 text-xs truncate">Bensound</div>
+                    </div>
+                </div>
 
-                        <div id="music-player" class="bg-gray-700/50 p-4 rounded-xl">
-                <div class="flex items-center space-x-4 mb-3">
-                                        <img id="coverImage" src="https://placehold.co/48x48/5865f2/FFFFFF?text=SONG" alt="Cover"
-                        class="w-12 h-12 rounded-lg flex-shrink-0 object-cover border border-gray-500/50">
-                    
-                                        <div class="flex-grow min-w-0">
-                        <div id="songTitleDisplay" class="text-white text-sm font-semibold truncate">Kalimba (Royalty Free Track)</div>
-                        <div id="artistDisplay" class="text-gray-400 text-xs truncate">Bensound</div>
-                    </div>
-                </div>
+                <!-- Controls Bar -->
+                <div class="flex items-center space-x-3">
+                    <!-- Previous Button -->
+                    <button id="prevBtn" title="Previous" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                    </button>
+                    
+                    <!-- Play/Pause Button -->
+                    <button id="playPauseBtn" title="Play/Pause" class="p-2 bg-discord-blurple hover:bg-discord-blurple/80 transition rounded-full shadow-lg flex-shrink-0">
+                        <!-- SVG Icon for Play -->
+                        <svg id="playIcon" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 6v12l10-6z"/></svg>
+                        <!-- SVG Icon for Pause (hidden initially) -->
+                        <svg id="pauseIcon" class="w-6 h-6 text-white hidden" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h4v12H6zm8 0h4v12h-4z"/></svg>
+                    </button>
+                    
+                    <!-- Next Button -->
+                    <button id="nextBtn" title="Next" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
+                    </button>
 
-                                <div class="flex items-center space-x-3">
-                                        <button id="prevBtn" title="Previous" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-                    </button>
-                    
-                                        <button id="playPauseBtn" title="Play/Pause" class="p-2 bg-discord-blurple hover:bg-discord-blurple/80 transition rounded-full shadow-lg flex-shrink-0">
-                                                <svg id="playIcon" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 6v12l10-6z"/></svg>
-                                                <svg id="pauseIcon" class="w-6 h-6 text-white hidden" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h4v12H6zm8 0h4v12h-4z"/></svg>
-                    </button>
-                    
-                                        <button id="nextBtn" title="Next" class="p-2 text-white/80 hover:text-white transition rounded-full flex-shrink-0">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
-                    </button>
+                    <!-- Progress Bar -->
+                    <div class="flex-grow">
+                        <input type="range" id="progressBar" value="0" min="0" max="100" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" style="accent-color: #5865f2;">
+                    </div>
 
-                                        <div class="flex-grow">
-                        <input type="range" id="progressBar" value="0" min="0" max="100" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" style="accent-color: #5865f2;">
-                    </div>
-
-                                        <div class="flex items-center space-x-1 w-28 flex-shrink-0 ml-3">
-                                                <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.74 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                        <input type="range" id="volumeControl" value="50" min="0" max="100" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" style="accent-color: #5865f2;">
-                    </div>
-                </div>
-            </div>
-        </div>
-            </div>
+                    <!-- Volume Control -->
+                    <div class="flex items-center space-x-1 w-28 flex-shrink-0 ml-3">
+                        <!-- Volume Icon -->
+                        <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.74 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                        <input type="range" id="volumeControl" value="50" min="0" max="100" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer" style="accent-color: #5865f2;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- --- END PLAYLIST MUSIC PLAYER SECTION --- -->
+    </div>
 
 </body>
 </html>
