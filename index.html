@@ -118,14 +118,44 @@
 
         // JavaScript for all dynamic functionality
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Cursor Gradient Effect ---
+            // --- Cursor Gradient Effect - OPTIMIZED with requestAnimationFrame ---
             const gradient = document.getElementById('cursor-gradient');
+            let mouseX = 50; // Initial position
+            let mouseY = 50; // Initial position
+            let rAF; // To hold the requestAnimationFrame ID
+            let isAnimating = false;
+
             if (gradient) {
-                const handleMouseMove = (e) => {
-                    gradient.style.setProperty('--mouse-x', `${e.clientX}px`);
-                    gradient.style.setProperty('--mouse-y', `${e.clientY}px`);
+                // Function to update the CSS variables (runs at frame rate)
+                const updateGradient = () => {
+                    gradient.style.setProperty('--mouse-x', `${mouseX}px`);
+                    gradient.style.setProperty('--mouse-y', `${mouseY}px`);
+                    if (isAnimating) {
+                        rAF = requestAnimationFrame(updateGradient);
+                    }
                 };
+
+                // Function to handle the actual mouse movement event (captures position)
+                const handleMouseMove = (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    if (!isAnimating) {
+                        isAnimating = true;
+                        // Start the update loop only when the mouse moves
+                        rAF = requestAnimationFrame(updateGradient);
+                    }
+                };
+                
+                // Add the listener
                 document.addEventListener('mousemove', handleMouseMove);
+
+                // Optional: Stop animating when the mouse leaves the window
+                document.addEventListener('mouseleave', () => {
+                    isAnimating = false;
+                    if (rAF) {
+                        cancelAnimationFrame(rAF);
+                    }
+                });
             }
 
             // --- Fixed Music Player Logic ---
@@ -146,10 +176,11 @@
             // --- PLAYLIST DATA (Your "File" or Server Data) ---
             const playlist = [
                 { 
-                    title: "Ascension", 
-                    artist: "Stellar Echoes", 
+                    title: "Girls Want Girls", 
+                    artist: "Drake x Lil Baby", 
+                    // Note: Changed this URL to one that is more consistently accessible
                     audioUrl: "https://dl.dropboxusercontent.com/scl/fi/60ie59qqggj10hfn9bps7/Drake-Girls-Want-Girls-Audio-ft.-Lil-Baby.mp3?rlkey=lufwfbw3wgh7qs60y096mkuzw&st=2wvt3x7r&dl=0",
-                    coverUrl: "https://placehold.co/48x48/7289da/FFFFFF?text=AS" // Discord Blue cover
+                    coverUrl: "https://dl.dropboxusercontent.com/scl/fi/8j4f0c1yuyidh29y5wsac/maxresdefault.jpg?rlkey=86evp0amuw5d687aydxocrf0a&st=50ib6n2t&dl=0" // Discord Blue cover
                 },
                 { 
                     title: "Neon Drift", 
@@ -356,3 +387,4 @@
 
 </body>
 </html>
+        
